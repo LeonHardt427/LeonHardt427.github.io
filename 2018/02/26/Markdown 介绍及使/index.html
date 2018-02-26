@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>Markdown 介绍及使用语法 · LeonHardt_427&#39;s Homepage</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        height: 50vh;
+        overflow: hidden;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180224 as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" type="text/css" href= /css/mobile.css?v=20180224 media="(max-width: 980px)"/>
+    <link rel="icon" href= /assets/favicon.ico>
+    <script>
+  // load webfont-loader async, and add callback function
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+  
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+      if (postIntroTags) {
+        postIntroTags.classList.add('post-fade-in');
+      }
+      if (postIntroMeat) {
+        postIntroMeat.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  async("https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", asyncCb)
+</script>
+    <script>
+        (function (w) {
+            "use strict";
+            // rel=preload support test
+            if (!w.loadCSS) {
+                w.loadCSS = function () { };
+            }
+            // define on the loadCSS obj
+            var rp = loadCSS.relpreload = {};
+            // rel=preload feature support test
+            // runs once and returns a function for compat purposes
+            rp.support = (function () {
+                var ret;
+                try {
+                    ret = w.document.createElement("link").relList.supports("preload");
+                } catch (e) {
+                    ret = false;
+                }
+                return function () {
+                    return ret;
+                };
+            })();
+
+            // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+            // then change that media back to its intended value on load
+            rp.bindMediaToggle = function (link) {
+                // remember existing media attr for ultimate state, or default to 'all'
+                var finalMedia = link.media || "all";
+
+                function enableStylesheet() {
+                    link.media = finalMedia;
+                }
+
+                // bind load handlers to enable media
+                if (link.addEventListener) {
+                    link.addEventListener("load", enableStylesheet);
+                } else if (link.attachEvent) {
+                    link.attachEvent("onload", enableStylesheet);
+                }
+
+                // Set rel and non-applicable media type to start an async request
+                // note: timeout allows this to happen async to let rendering continue in IE
+                setTimeout(function () {
+                    link.rel = "stylesheet";
+                    link.media = "only x";
+                });
+                // also enable media after 3 seconds,
+                // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+                setTimeout(enableStylesheet, 3000);
+            };
+
+            // loop through link elements in DOM
+            rp.poly = function () {
+                // double check this to prevent external calls from running
+                if (rp.support()) {
+                    return;
+                }
+                var links = w.document.getElementsByTagName("link");
+                for (var i = 0; i < links.length; i++) {
+                    var link = links[i];
+                    // qualify links to those with rel=preload and as=style attrs
+                    if (link.rel === "preload" && link.getAttribute("as") === "style" && !link.getAttribute("data-loadcss")) {
+                        // prevent rerunning on link
+                        link.setAttribute("data-loadcss", true);
+                        // bind listeners to toggle media back
+                        rp.bindMediaToggle(link);
+                    }
+                }
+            };
+
+            // if unsupported, run the polyfill
+            if (!rp.support()) {
+                // run once at least
+                rp.poly();
+
+                // rerun poly on an interval until onload
+                var run = w.setInterval(rp.poly, 500);
+                if (w.addEventListener) {
+                    w.addEventListener("load", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                } else if (w.attachEvent) {
+                    w.attachEvent("onload", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                }
+            }
+            // commonjs
+            if (typeof exports !== "undefined") {
+                exports.loadCSS = loadCSS;
+            }
+            else {
+                w.loadCSS = loadCSS;
+            }
+        }(typeof global !== "undefined" ? global : this));
+    </script>
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >LeonHardt_427&#39;s Homepage</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Markdown 介绍及使用语法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>LeonHardt_427's Homepage</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Markdown 介绍及使用语法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = Markdown>Markdown</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = Program>Program</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = "/static/api/js/share.js"];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/02/26</span>
+                
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="Markdown-介绍及使用"><a href="#Markdown-介绍及使用" class="headerlink" title="Markdown 介绍及使用"></a>Markdown 介绍及使用</h1><p>开始写起了Blog，不得不学的一个技术就是Markdwon。对于Markdown，其实自己也不是第一次接触。从很久以前就使用过<em>有道云笔记</em>、<em>印象笔记</em>这些记录工具，后来加入了<em>GitHub</em>交友网站后，每一次写Readme也是使用Markdown，虽然只是写几句话，从来没真正寻其内涵。这一次自己开通了GitHub Pages，也就趁机好好学一下Markdwon。所以，自己的第一篇文章也就从Markdown开始吧。</p>
+<h2 id="初识Markdown"><a href="#初识Markdown" class="headerlink" title="初识Markdown"></a>初识Markdown</h2><p>Markdown是由约翰·格鲁伯（John Gruber）和亚伦·斯沃茨（Aaron Swartz）发明的一种轻量级的「标记语言」。它的语法大方简洁，上手非常简单，目前被越来越多的写作爱好者，撰稿者和工程师广泛使用（<a href="https://www.imooc.com/article/12063，来源：慕课网" target="_blank" rel="noopener">https://www.imooc.com/article/12063，来源：慕课网</a> ）。Markdwon的作者之一John Gruber这样解释这种语言：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Markdown is two things:</span><br><span class="line"></span><br><span class="line">(1) a plain text formatting syntax;</span><br><span class="line">(2) a software tool, that converts the plain text formatting to others.</span><br></pre></td></tr></table></figure>
+<p>我自己的体会就是，Markdwon作为一种输入语法，让一些常见的编辑格式通过规定好的编辑符号表现出来，使文字的排版与编辑更加快捷方便。与日常使用的“所见即所得”的编辑方式不同，Markdwon的编辑不仅仅是文字，还有包含有许多排版格式符号，也是这些符号让文章的排版简介快速化，让手不用离开键盘就能完成整个文档的输入和格式编辑工作。这一点有点类似平时在写论文的时候运用的 <strong><em>LaTex</em></strong>语言，不过LaTex更多针对的是具有复杂公式，需要很多图片排版的科技论文，而Markdown针为更普遍的日志文书类的应用，语法会更加简单明了。</p>
+<p>既然提到了作者John Gruber，也不得不提到另一个作者Aaron Swartz。我在查阅Markdown的历史的时候，才了解了了Aaron Swartz的故事。这是一个天才的故事，也是IT届乃至整个世界的一个损失。在自己的博客上我就不提政治之类的东西了，但是我至少知道Aaron Swartz是一个为自己的理想和理念努力奋斗的人。硅谷密探有一篇文章写得很好<em>《16岁的黑客天才，26岁他自杀了，中间是..》</em>（<a href="https://baike.baidu.com/tashuo/browse/content?id=b7f93dd6bbf5ecd7aa3eafe8&amp;lemmaId=&amp;fromLemmaModule=pcBottom" target="_blank" rel="noopener">https://baike.baidu.com/tashuo/browse/content?id=b7f93dd6bbf5ecd7aa3eafe8&amp;lemmaId=&amp;fromLemmaModule=pcBottom</a> ），介绍了这位天才的一生，有机会的时候我也会多看看这篇文章，向前辈致敬。这段最后还是要致敬一下两位天才的前辈。</p>
+<p>Aaron Swartz（图片来源于百度百科）<br><img src="https://gss1.bdstatic.com/-vo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=7089acef73f08202399f996d2a929088/c8ea15ce36d3d5396bc2470f3a87e950342ab07b.jpg" alt="Aaron Swartz" title="optional title"><br>John Gruber（图片来源于百度百科，但是貌似不是作者本人的照片）<br><img src="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=a439cb22880a19d8df0e8c575293e9ee/a08b87d6277f9e2f6f8e8f9b1730e924b999f3ee.jpg" alt="John Gruber"></p>
+<p>对于Markdown更多的一些东西，我想引用<em>sainho</em>大牛在少数派上的一篇文章：Markdown完全入门 （ <a href="https://sspai.com/post/36610" target="_blank" rel="noopener">https://sspai.com/post/36610</a> ）介绍的很详尽。</p>
+<p>##Markdown 基本语法<br>这一节想写写有关Markdown的具体语法，我也是边学习边写。主要学习的资料就是Mweb提供的入门资料。文中提到的快捷键也为MWeb编辑器中的快捷键。</p>
+<p>###标题<br>标题作为文章常出现的文字格式，在Markdown中设置的方法很简洁，只需要#加文字标题内容即可。针对于不同级别的标题，Markdown采用加#的方式进行排列，从最大到最小有六级标题。</p>
+<p>Markdown  标题语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 第一级标题 `&lt;h1&gt;` </span><br><span class="line">## 第二级标题 `&lt;h2&gt;` </span><br><span class="line">###### 第六级标题 `&lt;h6&gt;`</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<h1 id="第一级标题-lt-h1-gt"><a href="#第一级标题-lt-h1-gt" class="headerlink" title="第一级标题 &lt;h1&gt;"></a>第一级标题 <code>&lt;h1&gt;</code></h1><h2 id="第二级标题-lt-h2-gt"><a href="#第二级标题-lt-h2-gt" class="headerlink" title="第二级标题 &lt;h2&gt;"></a>第二级标题 <code>&lt;h2&gt;</code></h2><h6 id="第六级标题-lt-h6-gt"><a href="#第六级标题-lt-h6-gt" class="headerlink" title="第六级标题 &lt;h6&gt;"></a>第六级标题 <code>&lt;h6&gt;</code></h6><h3 id="强调"><a href="#强调" class="headerlink" title="强调"></a>强调</h3><p>对于文字内容的强调，Markdown也有很简介的设置。具体效果有加粗、下划线、斜体三种表现形式</p>
+<p>Markdown 强调语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">*这些文字会生成`&lt;em&gt;`*</span><br><span class="line">_这些文字会生成`&lt;u&gt;`_</span><br><span class="line"></span><br><span class="line">**这些文字会生成`&lt;strong&gt;`**</span><br><span class="line">__这些文字会生成`&lt;strong&gt;`__</span><br></pre></td></tr></table></figure>
+<p>在 MWeb 中的快捷键为： <code>CMD + U</code>、<code>CMD + I</code>、<code>CMD + B</code><br>效果如下：</p>
+<p><em>这些文字会生成<code>&lt;em&gt;</code></em><br><em>这些文字会生成<code>&lt;u&gt;</code></em></p>
+<p><strong>这些文字会生成<code>&lt;strong&gt;</code></strong><br><strong>这些文字会生成<code>&lt;strong&gt;</code></strong></p>
+<h3 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h3><p>换行为四个及以上空格加回车。我个人感觉还是自己回车两次，多空一行会更好看。这一点有点类似于<strong>Latex</strong>语法习惯。</p>
+<p>在Mweb中，如果不想打这么多空格，只要回车就为换行，请勾选：<code>Preferences</code> - <code>Themes</code> - <code>Translate newlines to &lt;br&gt; tags</code></p>
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><h4 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h4><p>使用列表表达并列条目，是文章中常用的方式，具体如下：</p>
+<p>Markdown 无序列表语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 项目一 无序列表 `* + 空格键`</span><br><span class="line">* 项目二</span><br><span class="line">	* 项目二的子项目一 无序列表 `TAB + * + 空格键`</span><br><span class="line">	* 项目二的子项目二</span><br></pre></td></tr></table></figure>
+<p>在 MWeb 中的快捷键为： <code>Option + U</code><br>效果如下：</p>
+<ul>
+<li>项目一 无序列表 <code>* + 空格键</code></li>
+<li>项目二<ul>
+<li>项目二的子项目一 无序列表 <code>TAB + * + 空格键</code></li>
+<li>项目二的子项目二</li>
+</ul>
+</li>
+</ul>
+<h4 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h4><p>有序列表即为用数字排列的条目。<br>Markdown 有序列表语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 项目一 有序列表 `数字 + . + 空格键`</span><br><span class="line">2. 项目二 </span><br><span class="line">3. 项目三</span><br><span class="line">	1. 项目三的子项目一 有序列表 `TAB + 数字 + . + 空格键`</span><br><span class="line">	2. 项目三的子项目二</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<ol>
+<li>项目一 有序列表 <code>数字 + . + 空格键</code></li>
+<li>项目二 </li>
+<li>项目三<ol>
+<li>项目三的子项目一 有序列表 <code>TAB + 数字 + . + 空格键</code></li>
+<li>项目三的子项目二</li>
+</ol>
+</li>
+</ol>
+<h4 id="列表中嵌入代码块语法"><a href="#列表中嵌入代码块语法" class="headerlink" title="列表中嵌入代码块语法"></a>列表中嵌入代码块语法</h4><p>作为程序员写文章，怎么能少了代码？代码块表现形式如下：</p>
+<pre><code>1. 项目一 有序列表 `数字 + . + 空格键`
+
+    列表中嵌入代码块必须前后空一行，如这个写法
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fancyAlert</span>(<span class="params">arg</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(arg) &#123;</span><br><span class="line">    $.facebox(&#123;<span class="attr">div</span>:<span class="string">'#foo'</span>&#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    其他文本。
+
+2. 项目二
+</code></pre><h4 id="任务列表（Task-lists）"><a href="#任务列表（Task-lists）" class="headerlink" title="任务列表（Task lists）"></a>任务列表（Task lists）</h4><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- [ ] 任务一 未做任务 `- + 空格 + [ ]`</span><br><span class="line">- [x] 任务二 已做任务 `- + 空格 + [x]`</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<ul>
+<li style="list-style: none"><input type="checkbox"> 任务一 未做任务 <code>- + 空格 + [ ]</code></li>
+<li style="list-style: none"><input type="checkbox" checked> 任务二 已做任务 <code>- + 空格 + [x]</code></li>
+</ul>
+<h3 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h3><p>插入图片可以使文章更加生动形象。</p>
+<p>Markdown 插入图片语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif “option title”)</span><br><span class="line">格式: ![Alt Text](url &quot;option title&quot;)</span><br></pre></td></tr></table></figure>
+<p><code>Control + Shift + I</code> 可插入Markdown语法。<br>如果是 MWeb 的文档库中的文档，还可以用拖放图片、<code>CMD + V</code> 粘贴、<code>CMD + Option + I</code> 导入这三种方式来增加图片。<br>效果如下：</p>
+<p><img src="http://zh.mweb.im/asset/img/set-up-git.gif" alt="GitHub set up"></p>
+<p>MWeb 引入的特别的语法来设置图片宽度，方法是在图片描述后加 <code>-w + 图片宽度</code> 即可，比如说要设置上面的图片的宽度为 140，语法如为 <code>![GitHub-w140](set-up-git.gif)</code>：</p>
+<p><img src="http://zh.mweb.im/asset/img/set-up-git.gif" alt="GitHub set up-w140"></p>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">email &lt;example@example.com&gt;</span><br><span class="line">[GitHub](http://github.com)</span><br><span class="line">自动生成连接  &lt;http://www.github.com/&gt;</span><br></pre></td></tr></table></figure>
+<p><code>Control + Shift + L</code> 可插入Markdown语法。<br>如果是 MWeb 的文档库中的文档，拖放或<code>CMD + Option + I</code> 导入非图片时，会生成连接。<br>效果如下：</p>
+<p>Email 连接： <a href="mailto:&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#101;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;" target="_blank" rel="noopener">&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#101;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a><br><a href="http://github.com" target="_blank" rel="noopener">连接标题Github网站</a><br>自动生成连接像： <a href="http://www.github.com/" target="_blank" rel="noopener">http://www.github.com/</a> 这样</p>
+<h3 id="区块引用"><a href="#区块引用" class="headerlink" title="区块引用"></a>区块引用</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">某某说:</span><br><span class="line">&gt; 第一行引用</span><br><span class="line">&gt; 第二行费用文字</span><br></pre></td></tr></table></figure>
+<p><code>CMD + Shift + B</code> 可插入Markdown语法。<br>效果如下：</p>
+<p>某某说:</p>
+<blockquote>
+<p>第一行引用<br>第二行费用文字</p>
+</blockquote>
+<h3 id="行内代码"><a href="#行内代码" class="headerlink" title="行内代码"></a>行内代码</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">像这样即可：`&lt;addr&gt;` `code`</span><br></pre></td></tr></table></figure>
+<p><code>CMD + K</code> 可插入Markdown语法。<br>效果如下：</p>
+<p>像这样即可：<code>&lt;addr&gt;</code> <code>code</code></p>
+<h3 id="多行或者一段代码"><a href="#多行或者一段代码" class="headerlink" title="多行或者一段代码"></a>多行或者一段代码</h3><p>Markdown 语法：</p>
+<pre><code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fancyAlert</span>(<span class="params">arg</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(arg) &#123;</span><br><span class="line">    $.facebox(&#123;<span class="attr">div</span>:<span class="string">'#foo'</span>&#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><p><code>CMD + Shift + K</code> 可插入Markdown语法。<br>效果如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fancyAlert</span>(<span class="params">arg</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(arg) &#123;</span><br><span class="line">		$.facebox(&#123;<span class="attr">div</span>:<span class="string">'#foo'</span>&#125;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="顺序图或流程图"><a href="#顺序图或流程图" class="headerlink" title="顺序图或流程图"></a>顺序图或流程图</h3><p>Markdown 语法：</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">张三-&gt;李四: 嘿，小四儿, 写博客了没?</span><br><span class="line">Note right of 李四: 李四愣了一下，说：</span><br><span class="line">李四--&gt;张三: 忙得吐血，哪有时间写。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: 开始</span><br><span class="line">e=&gt;end: 结束</span><br><span class="line">op=&gt;operation: 我的操作</span><br><span class="line">cond=&gt;condition: 确认？</span><br><span class="line"></span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;e</span><br><span class="line">cond(no)-&gt;op</span><br></pre></td></tr></table></figure>
+</code></pre><p>效果如下（ <code>Preferences</code> - <code>Themes</code> - <code>Enable sequence &amp; flow chart</code> 才会看到效果 ）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">张三-&gt;李四: 嘿，小四儿, 写博客了没?</span><br><span class="line">Note right of 李四: 李四愣了一下，说：</span><br><span class="line">李四--&gt;张三: 忙得吐血，哪有时间写。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: 开始</span><br><span class="line">e=&gt;end: 结束</span><br><span class="line">op=&gt;operation: 我的操作</span><br><span class="line">cond=&gt;condition: 确认？</span><br><span class="line"></span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;e</span><br><span class="line">cond(no)-&gt;op</span><br></pre></td></tr></table></figure>
+<p>更多请参考：<a href="http://bramp.github.io/js-sequence-diagrams/" target="_blank" rel="noopener">http://bramp.github.io/js-sequence-diagrams/</a>, <a href="http://adrai.github.io/flowchart.js/" target="_blank" rel="noopener">http://adrai.github.io/flowchart.js/</a></p>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第一格表头 | 第二格表头</span><br><span class="line">--------- | -------------</span><br><span class="line">内容单元格 第一列第一格 | 内容单元格第二列第一格</span><br><span class="line">内容单元格 第一列第二格 多加文字 | 内容单元格第二列第二格</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<table>
+<thead>
+<tr>
+<th>第一格表头</th>
+<th>第二格表头</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内容单元格 第一列第一格</td>
+<td>内容单元格第二列第一格</td>
+</tr>
+<tr>
+<td>内容单元格 第一列第二格 多加文字</td>
+<td>内容单元格第二列第二格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="删除线"><a href="#删除线" class="headerlink" title="删除线"></a>删除线</h3><p>Markdown 语法：</p>
+<pre><code>加删除线像这样用： ~~删除这些~~
+</code></pre><p>效果如下：</p>
+<p>加删除线像这样用： <del>删除这些</del></p>
+<h3 id="分隔线"><a href="#分隔线" class="headerlink" title="分隔线"></a>分隔线</h3><p>以下三种方式都可以生成分隔线：</p>
+<pre><code>***
+
+*****
+
+- - -
+</code></pre><p>效果如下：</p>
+<hr>
+<hr>
+<hr>
+<h3 id="MathJax"><a href="#MathJax" class="headerlink" title="MathJax"></a>MathJax</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">块级公式：</span><br><span class="line">$$	x = \dfrac&#123;-b \pm \sqrt&#123;b^2 - 4ac&#125;&#125;&#123;2a&#125; $$</span><br><span class="line"></span><br><span class="line">\\[ \frac&#123;1&#125;&#123;\Bigl(\sqrt&#123;\phi \sqrt&#123;5&#125;&#125;-\phi\Bigr) e^&#123;\frac25 \pi&#125;&#125; =</span><br><span class="line">1+\frac&#123;e^&#123;-2\pi&#125;&#125; &#123;1+\frac&#123;e^&#123;-4\pi&#125;&#125; &#123;1+\frac&#123;e^&#123;-6\pi&#125;&#125;</span><br><span class="line">&#123;1+\frac&#123;e^&#123;-8\pi&#125;&#125; &#123;1+\ldots&#125; &#125; &#125; &#125; \\]</span><br><span class="line"></span><br><span class="line">行内公式： $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$</span><br></pre></td></tr></table></figure>
+<p>效果如下（<code>Preferences</code> - <code>Themes</code> - <code>Enable MathJax</code> 才会看到效果）：</p>
+<p>块级公式：<br>$$    x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a} $$</p>
+<p>\[ \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} =<br>1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}}<br>{1+\frac{e^{-8\pi}} {1+\ldots} } } } \]</p>
+<p>行内公式： $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$</p>
+<h3 id="脚注（Footnote）"><a href="#脚注（Footnote）" class="headerlink" title="脚注（Footnote）"></a>脚注（Footnote）</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是一个脚注：[^sample_footnote]</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>这是一个脚注：<a href="这里是脚注信息">^sample_footnote</a></p>
+<h3 id="注释和阅读更多"><a href="#注释和阅读更多" class="headerlink" title="注释和阅读更多"></a>注释和阅读更多</h3><!-- comment -->
+<a id="more"></a>
+<p>Actions-&gt;Insert Read More Comment <em>或者</em> <code>Command + .</code><br><strong>注</strong> 阅读更多的功能只用在生成网站或博客时，插入时注意要后空一行。</p>
+<h3 id="TOC"><a href="#TOC" class="headerlink" title="TOC"></a>TOC</h3><p>Markdown 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[TOC]</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>[TOC]</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/02/25/hello-world/" title= Hello World, Hello my GitHub page >
+                    <div class="prevTitle">Hello World, Hello my GitHub page</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNDMxOS8xMDg1Ng==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:leonhardt427@126.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/LeonHardt427" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+            
+                <a href="//weibo.com/5263330035/profile?topnav=1&wvr=6&is_all=1" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/lai-en-ha-te-24-79/activities" class="iconfont-archer zhihu" target="_blank" title=zhihu></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//orcid.org/0000-0002-5791-1097" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Markdown-介绍及使用"><span class="toc-number">1.</span> <span class="toc-text">Markdown 介绍及使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初识Markdown"><span class="toc-number">1.1.</span> <span class="toc-text">初识Markdown</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第一级标题-lt-h1-gt"><span class="toc-number">2.</span> <span class="toc-text">第一级标题 &lt;h1&gt;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#第二级标题-lt-h2-gt"><span class="toc-number">2.1.</span> <span class="toc-text">第二级标题 &lt;h2&gt;</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#第六级标题-lt-h6-gt"><span class="toc-number">2.1.0.0.0.1.</span> <span class="toc-text">第六级标题 &lt;h6&gt;</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#强调"><span class="toc-number">2.1.1.</span> <span class="toc-text">强调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#换行"><span class="toc-number">2.1.2.</span> <span class="toc-text">换行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#列表"><span class="toc-number">2.1.3.</span> <span class="toc-text">列表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#无序列表"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">无序列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#有序列表"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">有序列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#列表中嵌入代码块语法"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">列表中嵌入代码块语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#任务列表（Task-lists）"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">任务列表（Task lists）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#图片"><span class="toc-number">2.1.4.</span> <span class="toc-text">图片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#链接"><span class="toc-number">2.1.5.</span> <span class="toc-text">链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#区块引用"><span class="toc-number">2.1.6.</span> <span class="toc-text">区块引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#行内代码"><span class="toc-number">2.1.7.</span> <span class="toc-text">行内代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多行或者一段代码"><span class="toc-number">2.1.8.</span> <span class="toc-text">多行或者一段代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#顺序图或流程图"><span class="toc-number">2.1.9.</span> <span class="toc-text">顺序图或流程图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表格"><span class="toc-number">2.2.</span> <span class="toc-text">表格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#删除线"><span class="toc-number">2.2.1.</span> <span class="toc-text">删除线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分隔线"><span class="toc-number">2.2.2.</span> <span class="toc-text">分隔线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MathJax"><span class="toc-number">2.2.3.</span> <span class="toc-text">MathJax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#脚注（Footnote）"><span class="toc-number">2.2.4.</span> <span class="toc-text">脚注（Footnote）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注释和阅读更多"><span class="toc-number">2.2.5.</span> <span class="toc-text">注释和阅读更多</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TOC"><span class="toc-number">2.2.6.</span> <span class="toc-text">TOC</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 2 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2018/02/26/Markdown 介绍及使/" >Markdown 介绍及使用语法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2018/02/25/hello-world/" >Hello World, Hello my GitHub page</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Markdown"><span class="iconfont-archer">&#xe606;</span>Markdown</span>
+    
+        <span class="sidebar-tag-name" data-tags="Program"><span class="iconfont-archer">&#xe606;</span>Program</span>
+    
+        <span class="sidebar-tag-name" data-tags="essay"><span class="iconfont-archer">&#xe606;</span>essay</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
